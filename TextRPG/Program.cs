@@ -70,8 +70,12 @@ namespace TextRPG
         public static bool isRest = false;
         static void Main(string[] args)
         {
+            StartGame();
+        }
+        static void StartGame()
+        {
             SaveGameClass saveGame = new SaveGameClass(); // 저장 기능 클래스 생성
-                                                          // 저장된 캐릭터 로드
+                                                            // 저장된 캐릭터 로드
             Character player = saveGame.LoadCharacter();
             if (player == null)
             {
@@ -139,6 +143,7 @@ namespace TextRPG
                     Console.ResetColor();
                     fch = false;
                 }
+
 
                 Console.WriteLine("원하시는 행동을 입력해주세요.");
                 Console.Write(">> ");

@@ -230,6 +230,9 @@ namespace TextRPG
                 }
                 else if( character.IsDead )
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("\n탐험 실패");
+                    Console.ResetColor();
                     character.NowHealth = character.MaxHealth;
                     Console.WriteLine("\n[탐험 결과]");
                     Console.WriteLine($"체력 {character.NowHealth}");
