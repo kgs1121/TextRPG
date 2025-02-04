@@ -21,14 +21,14 @@ namespace TextRPG
         }
 
 
-        private Monster CreateMonsterForStage(int stageNumber)
+        private Monster CreateMonsterForStage(int stageNumber)  // 스테이지 별 몬스터 생성
         {
             // 스테이지에 따라 몬스터의 종류와 능력치를 다르게 설정
             string name = "";
             int health = 0;
             int attack = 0;
             int armor = 0;
-            switch ((stageNumber - 1) / 3)
+            switch ((stageNumber - 1) / 3)  // 3스테이지 마다 몬스터 변경
             {
                 case 0:
                     name = $"고블린{stageNumber}";
@@ -63,11 +63,11 @@ namespace TextRPG
         }
 
 
-        public void DisplayStageInfo()
+        public void DisplayStageInfo()  // 스테이지 정보 출력
         {
             string input;
             bool isLoop = false;
-            do
+            while(true)
             {
                 Console.Clear();
                 Console.WriteLine($"스테이지 {currentStageNumber} 정보\n");
@@ -91,11 +91,10 @@ namespace TextRPG
                 isLoop = true;
                 if (input == "0") return;
             }
-            while (input != "0");
         }
 
 
-        public void ShowStageNum(Character character)
+        public void ShowStageNum(Character character)   // 스테이지 선택 메뉴
         {
             bool isLoop = false;
             while (true)
@@ -135,7 +134,7 @@ namespace TextRPG
         }
 
 
-        public void EnterStage(Character character)
+        public void EnterStage(Character character)   // 스테이지 입장
         {
             bool isLoop = false;
             while (true)
@@ -166,7 +165,6 @@ namespace TextRPG
                 }
                 else if (int.TryParse(input, out int infonum) && infonum == 2)
                 {
-
                     DisplayStageInfo();
                     continue;
                 }
@@ -175,10 +173,10 @@ namespace TextRPG
         }
 
 
-        public void Fight(Character character)
+        public void Fight(Character character)   // 전투 로직
         {
             Console.Clear();
-            bool isLoop = false;
+            bool isLoop = false;   // 잘못입력 시 Error메세지 출력
             int retrynum = 1;
             int monsterMaxHP = Monster.Health;
             int getEx = 0;
@@ -206,7 +204,7 @@ namespace TextRPG
                     }
                 }
 
-                // 전투 결과 출력                ///////////////////////////////////////////////////////////////////////
+                // 전투 결과 출력
                 Monster.Health = monsterMaxHP;  // 몬스터 체력 초기화
                 
                 if (!character.IsDead)

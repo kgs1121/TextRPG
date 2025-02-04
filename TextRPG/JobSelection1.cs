@@ -13,7 +13,7 @@ namespace TextRPG
         {
             Character player = null; // player 변수를 null로 초기화
             string jobChoice = null;
-
+            bool isLoop = false;
             while (true)
             {
                 // 화면 초기 출력 (단 한 번만 호출)
@@ -30,11 +30,12 @@ namespace TextRPG
                 Console.WriteLine();
 
                 // 잘못된 입력 시 메시지를 출력
-                if (!string.IsNullOrEmpty(jobChoice) && (!int.TryParse(jobChoice, out int jobChoiceNumber) || !Enum.IsDefined(typeof(Job), jobChoiceNumber)))
+                if (isLoop)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("잘못된 입력입니다. 다시 입력해주세요.");
                     Console.ResetColor();
+                    isLoop = false;
                 }
 
                 Console.WriteLine("원하는 직업 번호를 입력해주세요.");
@@ -47,6 +48,7 @@ namespace TextRPG
                 {
                     break;
                 }
+                else isLoop = true;
             }
 
 

@@ -70,19 +70,31 @@ namespace TextRPG
         public static bool isRest = false;
         static void Main(string[] args)
         {
-            JobSelection jobSelection = new JobSelection();
-            Character player = jobSelection.SelectCharacter();
-            var inventory = new Inventory();
+            SaveGameClass saveGame = new SaveGameClass(); // 저장 기능 클래스 생성
+                                                          // 저장된 캐릭터 로드
+            Character player = saveGame.LoadCharacter();
+            if (player == null)
+            {
+                JobSelection jobSelection = new JobSelection();
+                player = jobSelection.SelectCharacter(); // 새 캐릭터 생성
+            }
+
+            // 저장된 인벤토리 로드
+            Inventory inventory = new Inventory();
+            saveGame.LoadInventory(inventory);
+
             var shop = new Shop();
             var dungeon = new Dungeon();
-            string input = null;
             bool fch = false;
+            bool isLoop = false;
+
             while (true)
             {
                 Console.Clear();
                 Console.WriteLine("스파르타 마을에 오신 여러분 환영합니다.");
                 Console.WriteLine("이곳에서 던전으로 들어가기전 활동을 할 수 있습니다.");
                 Console.WriteLine();
+
                 // 메뉴 출력
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("스파르타 마을");
@@ -92,14 +104,18 @@ namespace TextRPG
                 Console.WriteLine("3. 상점");
                 Console.WriteLine("4. 던전 입장");
                 Console.WriteLine("5. 휴식하기 (50G)");
-                Console.WriteLine("\n0. 종료");
+                Console.WriteLine("6. 저장하기");
+                Console.WriteLine("초기화하기");
+                Console.WriteLine("\n종료");
                 Console.WriteLine();
-                // 만약 잘못된 입력이 있었다면, 그 메시지를 화면에 남깁니다.
-                if (!string.IsNullOrEmpty(input) && input != "1" && input != "2" && input != "3" && input != "4" && input != "5" &&input != "0")
+
+                //오류 메시지 출력
+                if (isLoop)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("잘못된 입력입니다. 다시 입력해주세요.");
                     Console.ResetColor();
+                    isLoop = false;
                 }
                 if (isRest)
                 {
@@ -119,21 +135,18 @@ namespace TextRPG
                 Console.WriteLine("원하시는 행동을 입력해주세요.");
                 Console.Write(">> ");
 
-                input = Console.ReadLine();
+                string input = Console.ReadLine();  // 행동 입력
 
-                // 입력된 번호에 맞는 동작
                 switch (input)
                 {
                     case "1":
                         player.ShowStatus();  // 상태 보기 함수 호출
                         break;
                     case "2":
-                        inventory.ShowInventory((Character)player);  // 인벤토리 보여주기
+                        inventory.ShowInventory((Character)player);
                         break;
                     case "3":
-                        //Console.WriteLine("상점 메뉴입니다.");
                         shop.ShowShop((Character)player, inventory);
-                        // 상점 관련 로직 추가
                         break;
                     case "4":
                         dungeon.ShowDungeon(player);
@@ -142,11 +155,27 @@ namespace TextRPG
                         player.Rset();
                         fch = true;
                         break;
-                    case "0":
+                    case "6":
+                        saveGame.SaveCharacter(player);
+                        saveGame.SaveInventory(inventory);
+                        break;
+                    case "초기화하기":
+                        Console.WriteLine("아무거나 입력 시 초기화");
+                        Console.WriteLine("0. 취소");
+                        Console.WriteLine("\n정말 초기화 하시셌습니까?");
+                        Console.Write(">> ");
+                        string cancle = Console.ReadLine();
+                        if (cancle == "0") break;
+                        else
+                        {
+                            saveGame.ResetSaveData();
+                            return;
+                        }
+                    case "종료":
                         Console.WriteLine("게임을 종료합니다.");
                         return;  // 프로그램 종료
                     default:
-                        Console.WriteLine("잘못된 입력입니다. 1, 2, 3, 0 중 하나를 입력해주세요.");
+                        isLoop = true;
                         break;
                 }
             }

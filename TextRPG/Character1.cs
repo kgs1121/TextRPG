@@ -65,7 +65,8 @@ namespace TextRPG
             }
         }
 
-        public void TakeDamage(int damage)
+
+        public void TakeDamage(int damage)  // 캐릭터 받는 데미지 출력
         {
             
             NowHealth -= damage;
@@ -100,7 +101,7 @@ namespace TextRPG
 
 
         // 상태 보기 메서드
-        public void ShowStatus()
+        public void ShowStatus()  // 상태 보기 실행 함수
         {
             bool isLoop = false;
             while (true)
@@ -133,7 +134,7 @@ namespace TextRPG
         }
 
 
-        public void Statusconsol()
+        public void Statusconsol()  // 상태 보기 함수
         {
             int totalAttack = Attack;
             int totalArmor = Armor;
@@ -178,14 +179,14 @@ namespace TextRPG
         }
 
 
-        public int NeedEx()
+        public int NeedEx()  //레벨업 조건
         {
             if(Level == 1) return 40 * Level;
             else if (Level > 1 && Level < 11) return 100 * Level;
             else return 200 * Level;
         }
 
-        public void AddEx(int xp)
+        public void AddEx(int xp)   // 경험치 획득
         {
             islevelup = false;
             NowEx += xp;
@@ -199,7 +200,7 @@ namespace TextRPG
             }
         }
 
-        public void Levelup()
+        public void Levelup()  // 레벨업 적용
         {
             Level++;
             MaxHealth += randomstat.Next(5, 11);
@@ -208,7 +209,7 @@ namespace TextRPG
         }
 
 
-        public void Rset()
+        public void Rset()  // 휴식
         {
             if (Gold >= 50)
             {
