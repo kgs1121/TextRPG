@@ -76,7 +76,8 @@ namespace TextRPG
                 Console.WriteLine($"체력: {Monster.Health}");
                 Console.WriteLine($"공격력: {Monster.Attack}");
                 Console.WriteLine($"방어력: {Monster.Armor}");
-                Console.WriteLine("\n 0. 나가기\n");
+                Console.WriteLine("\n 0. 나가기");
+                Console.WriteLine();
                 if (isLoop)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
@@ -84,7 +85,7 @@ namespace TextRPG
                     Console.ResetColor();
                     isLoop = false;
                 }
-                Console.WriteLine("\n 원하시는 행동을 입력해주세요.");
+                Console.WriteLine("원하시는 행동을 입력해주세요.");
                 Console.Write(">> ");
                 input = Console.ReadLine();
                 isLoop = true;
@@ -110,6 +111,7 @@ namespace TextRPG
                     Console.WriteLine($"{i}. Stage {i}"); //else
                 }
                 Console.WriteLine("\n0. 나가기");
+                Console.WriteLine();
                 if (isLoop)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
@@ -117,7 +119,7 @@ namespace TextRPG
                     Console.ResetColor();
                     isLoop = false;
                 }
-                Console.WriteLine("\n원하시는 행동을 입력해주세요.");
+                Console.WriteLine("원하시는 행동을 입력해주세요.");
                 Console.Write(">> ");
                 string input = Console.ReadLine();
 
@@ -145,11 +147,12 @@ namespace TextRPG
                 Console.WriteLine();
                 Console.WriteLine("1. 싸운다");
                 Console.WriteLine("2. 스테이지 정보");
-                Console.WriteLine("0. 나간다");
+                Console.WriteLine("\n0. 나간다");
+                Console.WriteLine();
                 if (isLoop)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("\n잘못된 입력입니다. 다시 입력해주세요.");
+                    Console.WriteLine("잘못된 입력입니다. 다시 입력해주세요.");
                     Console.ResetColor();
                     isLoop = false;
                 }
@@ -167,32 +170,40 @@ namespace TextRPG
                     DisplayStageInfo();
                     continue;
                 }
+                else isLoop = true;
             }
         }
 
 
         public void Fight(Character character)
         {
+            Console.Clear();
             bool isLoop = false;
             int retrynum = 1;
             int monsterMaxHP = Monster.Health;
-            
+            int getEx = 0;
             Console.WriteLine($"당신의 체력: {character.NowHealth}, 몬스터의 체력: {Monster.Health}");
             while (true)
             {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"Stage{currentStageNumber}");
+                Console.ResetColor();
                 // 전투 루프
                 while (character.NowHealth > 0 && Monster.Health > 0)
                 {
+                    if (!isLoop)
+                    {
+                        Console.WriteLine();
+                        int CAttack = Math.Max(0, character.Attack - Monster.Armor);   // 캐릭터의 공격값
+                        int MAttack = Math.Max(0, Monster.Attack - character.Armor); // 몬스터의 공격값
+                        int MrandAttack = randomA.Next(MAttack, MAttack + 10);  // 몬스터의 공격 랜덤값
+                        int CrandAttack = randomA.Next(CAttack, CAttack + 10);  // 캐릭터의 공격 랜덤값
 
-                    int CAttack = Math.Max(0, character.Attack - Monster.Armor);   // 캐릭터의 공격값
-                    int MAttack = Math.Max(0, Monster.Attack - character.Armor); // 몬스터의 공격값
-                    int MrandAttack = randomA.Next(MAttack, MAttack + 10);  // 몬스터의 공격 랜덤값
-                    int CrandAttack = randomA.Next(CAttack, CAttack + 10);  // 캐릭터의 공격 랜덤값
-
-                    // 캐릭터 공격
-                    Monster.TakeDamage(CrandAttack);
-                    // 몬스터 공격
-                    character.TakeDamage(MrandAttack);
+                        // 캐릭터 공격
+                        Monster.TakeDamage(CrandAttack);
+                        // 몬스터 공격
+                        character.TakeDamage(MrandAttack);
+                    }
                 }
 
                 // 전투 결과 출력                ///////////////////////////////////////////////////////////////////////
@@ -202,16 +213,32 @@ namespace TextRPG
                 {
                     int getGold = randomG.Next(currentStageNumber * 100, currentStageNumber * 200);
                     character.Gold += getGold;
+                    getEx = currentStageNumber * 10 * retrynum;
+                    character.AddEx(getEx);
                     Console.WriteLine($"스테이지{currentStageNumber} 클리어!");
+                    if (character.islevelup)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                        Console.WriteLine("\n축하드립니다 레벨업하셨습니다!");
+                        Console.ResetColor();
+                        character.islevelup = false;
+                    }
+                    Console.WriteLine($"경험치 획득: {currentStageNumber * 10 * retrynum}");
                     Console.WriteLine($"골드 획득: {getGold}");
                 }
                 else
                 {
-
+                    if (character.NowEx > character.Level * 20)
+                    {
+                        character.NowEx -= character.Level * 20;
+                    }
+                    else character.NowEx = 0;
                 }
 
                 Console.WriteLine("\n1. 다시하기");
-                Console.WriteLine("0. 나가기");
+                Console.WriteLine("2. 휴식하기 (100G)");
+                Console.WriteLine("\n0. 나가기");
+                Console.WriteLine();
                 if (isLoop)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
@@ -219,13 +246,18 @@ namespace TextRPG
                     Console.ResetColor();
                     isLoop = false;
                 }
-                Console.WriteLine("\n원하시는 행동을 입력하세요.");
-                Console.WriteLine(">> ");
+                Console.WriteLine("원하시는 행동을 입력하세요.");
+                Console.Write(">> ");
                 string rtyinput = Console.ReadLine();
                 if (rtyinput == "1")
                 {
                     retrynum++;
-                    continue;
+                    Console.Clear();
+                }
+                else if (rtyinput == "2")
+                {
+                    character.Rset();
+                    break;
                 }
                 else if (rtyinput == "0") return;
                 else isLoop = true;

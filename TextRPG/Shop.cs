@@ -27,7 +27,6 @@ namespace TextRPG
             foreach (var item in ItemsSale)
             {
                 itemPrices.Add(item.Price); // 가격만 추가
-                itemdiscount.Add((int)(item.Price * 4.0 / 5));
             }
         }
 
@@ -69,7 +68,7 @@ namespace TextRPG
                     Console.Clear();
                     Shopconsol(character);
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("\n잘못된 입력입니다. 다시 입력해주세요.");
+                    Console.WriteLine("잘못된 입력입니다. 다시 입력해주세요.");
                     Console.ResetColor();
                     Console.WriteLine("원하시는 행동을 입력해주세요. ");
                     Console.Write(">> ");
@@ -148,6 +147,7 @@ namespace TextRPG
 
                     else if (character.Gold >= selectedItem.Price)
                     {
+                        itemdiscount.Add((int)(selectedItem.Price * 4.0 / 5));
                         character.Gold -= itemPrices[itemIndex - 1];  // 구매 시 금액 차감
                         selectedItem.Price = 0;
                         inventory.AddItem(selectedItem);
@@ -253,6 +253,7 @@ namespace TextRPG
                     var selectedItem = ItemsSale[Selnum];
                     int getGold = (int)(itemPrices[Selnum] * (4.0 / 5));
                     character.Gold += getGold;
+                    itemdiscount.RemoveAt(Selnum - 1);
                     inventory.RemoveItem(Selnum - 1);
                     selectedItem.Price = itemPrices[Selnum];
                 }

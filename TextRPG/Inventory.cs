@@ -128,9 +128,9 @@ namespace TextRPG
                     // 아이템 정보 출력
                     if (!Shop.isSaleItem)
                     {
-                        Console.WriteLine($"{i + 1}. {equippedMark}{item.Name} |{bonus} | {item.Description}");
+                        Console.WriteLine($"- {equippedMark}{item.Name} |{bonus} | {item.Description}");
                     }
-                    else Console.WriteLine($"{i + 1}. {equippedMark}{item.Name} |{bonus} | {item.Description} | 판매 골드: {Shop.itemdiscount[j]}");
+                    else Console.WriteLine($"- {equippedMark}{item.Name} |{bonus} | {item.Description} | 판매 골드: {Shop.itemdiscount[j]}");
                     j++;
                 }
             }
@@ -216,7 +216,7 @@ namespace TextRPG
         // 장착 해제 메뉴 추가
         public void UnEquipMenu(Character character)
         {
-            string errorText = "잘못된 입력입니다. 다시 입력해주세요.";
+            
             bool isLoop = false;
             while (true)
             {
@@ -252,7 +252,7 @@ namespace TextRPG
                 if (isLoop)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine(errorText);
+                    Console.WriteLine("\n잘못된 입력입니다. 다시 입력해주세요.");
                     Console.ResetColor();
                     isLoop = false;
                 }

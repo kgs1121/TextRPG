@@ -16,8 +16,9 @@ namespace TextRPG
         public int Attack { get; set; }
         public int Armor { get; set; }
         public int Gold { get; set; }
-        public int Level { get; set; }
+        public int Level = 1;
         public int NowEx { get; set; }
+        public double EXP { get; set; }
         public IItem EquippedItem { get; set; }  // 장착 중인 아이템
         public List<IItem> EquippedItems { get; set; }
 
@@ -25,12 +26,13 @@ namespace TextRPG
 
         public bool IsDead => NowHealth <= 0;
 
+        public bool islevelup;
+
         // 생성자에서 직업을 선택하고, 직업에 맞는 기본 속성 설정
         public Character(string name, Job job)
         {
             Name = name;
             CharacterJob = job;
-            
             EquippedItems = new List<IItem>();
 
             // 직업별 기본 속성 설정
@@ -41,7 +43,7 @@ namespace TextRPG
                     NowHealth = MaxHealth;
                     Attack = 15;
                     Armor = 10;
-                    Gold = 1500;
+                    Gold = 0;
                     EquippedItem = null;
                     break;
                 case Job.마법사:
@@ -107,14 +109,15 @@ namespace TextRPG
                 Statusconsol();
                 Console.WriteLine();
                 Console.WriteLine("0. 나가기");
+                Console.WriteLine();
                 if (isLoop)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("\n잘못된 입력입니다. 다시 입력해주세요.");
+                    Console.WriteLine("잘못된 입력입니다. 다시 입력해주세요.");
                     Console.ResetColor();
                     isLoop = false;
                 }
-                Console.WriteLine("\n원하시는 행동을 입력해주세요.");
+                Console.WriteLine("원하시는 행동을 입력해주세요.");
                 Console.Write(">> ");
                 string choice = Console.ReadLine();
                 if (choice == "0")
@@ -144,7 +147,8 @@ namespace TextRPG
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("상태 보기");
             Console.ResetColor();
-            Console.WriteLine($"Lv. 01 : 0%");
+            if(Level < 10) Console.WriteLine($"Lv. 0{Level} : {EXP} %");
+            else Console.WriteLine($"Lv. {Level} : {EXP} %");
             Console.WriteLine($"{Name} ({CharacterJob})");
             Console.WriteLine($"체력 : {NowHealth}");
 
@@ -176,16 +180,21 @@ namespace TextRPG
 
         public int NeedEx()
         {
-            return 100 * Level;
+            if(Level == 1) return 40 * Level;
+            else if (Level > 1 && Level < 11) return 100 * Level;
+            else return 200 * Level;
         }
 
         public void AddEx(int xp)
         {
+            islevelup = false;
             NowEx += xp;
-
-            if(NowEx >= NeedEx())
+            EXP = (NowEx / (double)NeedEx()) * 100;
+            if (EXP >= 100)
             {
+                islevelup = true;
                 NowEx = 0;
+                EXP = 0;
                 Levelup();
             }
         }
@@ -193,7 +202,6 @@ namespace TextRPG
         public void Levelup()
         {
             Level++;
-
             MaxHealth += randomstat.Next(5, 11);
             Attack += randomstat.Next(1, 6);
             Armor += randomstat.Next(1, 5);
@@ -202,9 +210,13 @@ namespace TextRPG
 
         public void Rset()
         {
-            Gold -= 50;
-            NowHealth = MaxHealth;
+            if (Gold >= 50)
+            {
+                Game.isRest = true;
+                Gold -= 50;
+                NowHealth = MaxHealth;
+            }
+            else Console.WriteLine("골드가 부족합니다");
         }
-
     }
 }

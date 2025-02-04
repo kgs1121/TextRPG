@@ -67,8 +67,7 @@ namespace TextRPG
     // 게임 클래스
     class Game
     {
-        
-
+        public static bool isRest = false;
         static void Main(string[] args)
         {
             JobSelection jobSelection = new JobSelection();
@@ -77,7 +76,7 @@ namespace TextRPG
             var shop = new Shop();
             var dungeon = new Dungeon();
             string input = null;
-            bool isRest = false;
+            bool fch = false;
             while (true)
             {
                 Console.Clear();
@@ -93,21 +92,30 @@ namespace TextRPG
                 Console.WriteLine("3. 상점");
                 Console.WriteLine("4. 던전 입장");
                 Console.WriteLine("5. 휴식하기 (50G)");
-                Console.WriteLine("0. 종료");
+                Console.WriteLine("\n0. 종료");
+                Console.WriteLine();
                 // 만약 잘못된 입력이 있었다면, 그 메시지를 화면에 남깁니다.
                 if (!string.IsNullOrEmpty(input) && input != "1" && input != "2" && input != "3" && input != "4" && input != "5" &&input != "0")
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("\n잘못된 입력입니다. 다시 입력해주세요.");
+                    Console.WriteLine("잘못된 입력입니다. 다시 입력해주세요.");
                     Console.ResetColor();
                 }
                 if (isRest)
                 {
-                    Console.ForegroundColor= ConsoleColor.Yellow;
-                    Console.WriteLine("\n체력을 회복했습니다");
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("체력을 회복했습니다");
                     Console.ResetColor();
                     isRest = false;
                 }
+                else if (fch)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("골드가 부족합니다.");
+                    Console.ResetColor();
+                    fch = false;
+                }
+
                 Console.WriteLine("원하시는 행동을 입력해주세요.");
                 Console.Write(">> ");
 
@@ -132,7 +140,7 @@ namespace TextRPG
                         break;
                     case "5":
                         player.Rset();
-                        isRest = true;
+                        fch = true;
                         break;
                     case "0":
                         Console.WriteLine("게임을 종료합니다.");
