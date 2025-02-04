@@ -118,6 +118,41 @@ namespace TextRPG
         }
 
 
+        /*
+         
+        // 캐릭터 텍스트 파일 내용
+        용사
+        Warrior
+        5
+        100
+        75
+        20
+        10
+        500
+        30
+        150.5
 
+        // LoadCharacter() 실행 후:
+        Character character = new Character("용사", Job.Warrior);
+        character.Level = 5;
+        character.MaxHealth = 100;
+        character.NowHealth = 75;
+        character.Attack = 20;
+        character.Armor = 10;
+        character.Gold = 500;
+        character.NowEx = 30;
+        character.EXP = 150.5;
+
+
+        // 인벤토리 텍스트 파일 내용:
+        철검,0,15,튼튼한 철로 만들어진 검,200
+        가죽 갑옷,10,0,가죽으로 만든 갑옷,150
+
+        // LoadInventory() 실행 후:
+        inventory.AddItem(new Item("철검", 0, 15, "튼튼한 철로 만들어진 검", 200));
+        inventory.AddItem(new Item("가죽 갑옷", 10, 0, "가죽으로 만든 갑옷", 150));
+
+
+        */
     }
 }

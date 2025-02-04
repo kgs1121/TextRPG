@@ -210,9 +210,9 @@ namespace TextRPG
                 if (!character.IsDead)
                 {
                     int getGold = randomG.Next(currentStageNumber * 100, currentStageNumber * 200);
-                    character.Gold += getGold;
+                    
                     getEx = currentStageNumber * 10 * retrynum;
-                    character.AddEx(getEx);
+                    
                     Console.WriteLine($"스테이지{currentStageNumber} 클리어!");
                     if (character.islevelup)
                     {
@@ -221,11 +221,19 @@ namespace TextRPG
                         Console.ResetColor();
                         character.islevelup = false;
                     }
-                    Console.WriteLine($"경험치 획득: {currentStageNumber * 10 * retrynum}");
-                    Console.WriteLine($"골드 획득: {getGold}");
+                    Console.WriteLine("\n[탐험 결과]");
+                    Console.WriteLine($"체력 {character.NowHealth}");
+                    Console.WriteLine($"Level {character.Level} {character.EXP} % -> {((character.NowEx + getEx) / (double)character.NeedEx()) * 100} %");
+                    character.AddEx(getEx);
+                    Console.WriteLine($"보유 골드: {character.Gold}G -> {character.Gold + getGold}G");
+                    character.Gold += getGold;
                 }
-                else
+                else if( character.IsDead )
                 {
+                    character.NowHealth = character.MaxHealth;
+                    Console.WriteLine("\n[탐험 결과]");
+                    Console.WriteLine($"체력 {character.NowHealth}");
+                    Console.WriteLine($"Level {character.Level} {character.EXP} % -> {((character.NowEx - character.Level * 20) / (double)character.NeedEx()) * 100} %");
                     if (character.NowEx > character.Level * 20)
                     {
                         character.NowEx -= character.Level * 20;

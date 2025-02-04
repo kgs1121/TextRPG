@@ -87,6 +87,7 @@ namespace TextRPG
             var dungeon = new Dungeon();
             bool fch = false;
             bool isLoop = false;
+            bool isSave = false;
 
             while (true)
             {
@@ -105,10 +106,17 @@ namespace TextRPG
                 Console.WriteLine("4. 던전 입장");
                 Console.WriteLine("5. 휴식하기 (50G)");
                 Console.WriteLine("6. 저장하기");
-                Console.WriteLine("초기화하기");
-                Console.WriteLine("\n종료");
+                Console.WriteLine("\n초기화하기 입력 시 초기화");
+                Console.WriteLine("종료 입력 시 종료");
                 Console.WriteLine();
 
+                if (isSave)
+                {
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.WriteLine("저장되었습니다.");
+                    Console.ResetColor();
+                    isSave = false;
+                }
                 //오류 메시지 출력
                 if (isLoop)
                 {
@@ -156,11 +164,12 @@ namespace TextRPG
                         fch = true;
                         break;
                     case "6":
+                        isSave = true;
                         saveGame.SaveCharacter(player);
                         saveGame.SaveInventory(inventory);
                         break;
                     case "초기화하기":
-                        Console.WriteLine("아무거나 입력 시 초기화");
+                        Console.WriteLine("\n아무거나 입력 시 초기화");
                         Console.WriteLine("0. 취소");
                         Console.WriteLine("\n정말 초기화 하시셌습니까?");
                         Console.Write(">> ");
