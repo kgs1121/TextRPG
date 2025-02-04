@@ -9,7 +9,7 @@ namespace TextRPG
     public class Inventory
     {
         public List<Item> Items { get; private set; }
-
+        
         public Inventory()
         {
             Items = new List<Item>();  // 인벤토리 아이템 리스트
@@ -89,7 +89,7 @@ namespace TextRPG
 
         }
 
-        private void DisplayInventoryHeader()
+        private void DisplayInventoryHeader()  //인벤토리 화면1
         {
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("인벤토리");
@@ -97,10 +97,11 @@ namespace TextRPG
             Console.WriteLine("보유 중인 아이템을 관리할 수 있습니다.");
         }
 
-        private void DisplayItemList(Character character)
+        public void DisplayItemList(Character character)  //인벤토리 화면2
         {
+            
             Console.WriteLine();
-
+            int j = 0;
             if (Items.Count == 0)
             {
                 Console.WriteLine("아이템이 비어있습니다");
@@ -120,12 +121,17 @@ namespace TextRPG
                     }
 
                     string bonus = string.Empty;
-
+                    
                     if (item.AttackBonus > 0) bonus += $" 공격력 +{item.AttackBonus}";
                     if (item.ArmorBonus > 0) bonus += $" 방어력 +{item.ArmorBonus}";
 
                     // 아이템 정보 출력
-                    Console.WriteLine($"{i + 1}. {equippedMark}{item.Name} |{bonus} | {item.Description}");
+                    if (!Shop.isSaleItem)
+                    {
+                        Console.WriteLine($"{i + 1}. {equippedMark}{item.Name} |{bonus} | {item.Description}");
+                    }
+                    else Console.WriteLine($"{i + 1}. {equippedMark}{item.Name} |{bonus} | {item.Description} | 판매 골드: {Shop.itemdiscount[j]}");
+                    j++;
                 }
             }
         }
@@ -270,6 +276,11 @@ namespace TextRPG
                     isLoop = true;  // 잘못된 입력 시 재입력
                 }
             }
+        }
+
+        public void RemoveItem(int num)
+        {
+            Items.RemoveAt(num);
         }
     }
 }

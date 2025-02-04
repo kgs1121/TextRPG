@@ -12,7 +12,7 @@ namespace TextRPG
         public int AttackBonus { get; set; }
         public int ArmorBonus { get; set; }
         public string Description { get; }
-        public int Price { get; set; }  // 가격 추가
+        public int Price { get; set; }  // 가격
 
         public Item(string name, int attackBonus, int armorBonus, string description, int price)
         {
@@ -21,6 +21,7 @@ namespace TextRPG
             ArmorBonus = armorBonus;
             Description = description;
             Price = price;
+            int orginPrice = price;
         }
 
         public void Use(Character character)

@@ -10,7 +10,8 @@ namespace TextRPG
     {
         public int StageNumber { get; set; }
         public Monster Monster { get; set; }
-
+        private Random randomG = new Random();
+        private Random randomA = new Random();
         private int currentStageNumber;
         public Stage currentStage;
 
@@ -159,7 +160,6 @@ namespace TextRPG
                 else if (int.TryParse(input, out int Fightnum) && Fightnum == 1)
                 {
                     Fight(character);
-                    character.Health = 100;
                 }
                 else if (int.TryParse(input, out int infonum) && infonum == 2)
                 {
@@ -174,27 +174,41 @@ namespace TextRPG
         public void Fight(Character character)
         {
             bool isLoop = false;
-            Console.WriteLine($"당신의 체력: {character.Health}, 몬스터의 체력: {Monster.Health}");
+            int retrynum = 1;
+            int monsterMaxHP = Monster.Health;
+            
+            Console.WriteLine($"당신의 체력: {character.NowHealth}, 몬스터의 체력: {Monster.Health}");
             while (true)
             {
                 // 전투 루프
-                while (character.Health > 0 && Monster.Health > 0)
+                while (character.NowHealth > 0 && Monster.Health > 0)
                 {
 
-                    int damageToMonster = Math.Max(0, character.Attack - Monster.Armor);
-                    int damageToCharacter = Math.Max(0, Monster.Attack - character.Armor);
+                    int CAttack = Math.Max(0, character.Attack - Monster.Armor);   // 캐릭터의 공격값
+                    int MAttack = Math.Max(0, Monster.Attack - character.Armor); // 몬스터의 공격값
+                    int MrandAttack = randomA.Next(MAttack, MAttack + 10);  // 몬스터의 공격 랜덤값
+                    int CrandAttack = randomA.Next(CAttack, CAttack + 10);  // 캐릭터의 공격 랜덤값
+
                     // 캐릭터 공격
-                    Monster.TakeDamage(damageToMonster);
+                    Monster.TakeDamage(CrandAttack);
                     // 몬스터 공격
-                    character.TakeDamage(damageToCharacter);
+                    character.TakeDamage(MrandAttack);
                 }
 
                 // 전투 결과 출력                ///////////////////////////////////////////////////////////////////////
-                Console.WriteLine($"스테이지{currentStageNumber} 클리어!");
-                Console.WriteLine("골드 획득: ");
+                Monster.Health = monsterMaxHP;  // 몬스터 체력 초기화
+                
+                if (!character.IsDead)
+                {
+                    int getGold = randomG.Next(currentStageNumber * 100, currentStageNumber * 200);
+                    character.Gold += getGold;
+                    Console.WriteLine($"스테이지{currentStageNumber} 클리어!");
+                    Console.WriteLine($"골드 획득: {getGold}");
+                }
+                else
+                {
 
-
-
+                }
 
                 Console.WriteLine("\n1. 다시하기");
                 Console.WriteLine("0. 나가기");
@@ -208,7 +222,11 @@ namespace TextRPG
                 Console.WriteLine("\n원하시는 행동을 입력하세요.");
                 Console.WriteLine(">> ");
                 string rtyinput = Console.ReadLine();
-                if (rtyinput == "1") continue;
+                if (rtyinput == "1")
+                {
+                    retrynum++;
+                    continue;
+                }
                 else if (rtyinput == "0") return;
                 else isLoop = true;
             }

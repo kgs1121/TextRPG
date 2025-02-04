@@ -11,44 +11,50 @@ namespace TextRPG
     {
         public string Name { get; }
         public Job CharacterJob { get; }
-        public int Health { get; set; }
+        public int MaxHealth { get; set; }
+        public int NowHealth { get; set; }
         public int Attack { get; set; }
         public int Armor { get; set; }
         public int Gold { get; set; }
-
-
+        public int Level { get; set; }
+        public int NowEx { get; set; }
         public IItem EquippedItem { get; set; }  // 장착 중인 아이템
         public List<IItem> EquippedItems { get; set; }
 
-        public bool IsDead => Health <= 0;
+        private Random randomstat = new Random();
+
+        public bool IsDead => NowHealth <= 0;
 
         // 생성자에서 직업을 선택하고, 직업에 맞는 기본 속성 설정
         public Character(string name, Job job)
         {
             Name = name;
             CharacterJob = job;
-
+            
             EquippedItems = new List<IItem>();
 
             // 직업별 기본 속성 설정
             switch (job)
             {
                 case Job.전사:
-                    Health = 120;
+                    MaxHealth = 120;
+                    NowHealth = MaxHealth;
                     Attack = 15;
                     Armor = 10;
                     Gold = 1500;
                     EquippedItem = null;
                     break;
                 case Job.마법사:
-                    Health = 80;
+                    MaxHealth = 80;
+                    NowHealth = MaxHealth;
                     Attack = 25;
                     Armor = 3;
                     Gold = 1500;
                     EquippedItem = null;
                     break;
                 case Job.궁수:
-                    Health = 90;
+                    MaxHealth = 90;
+                    NowHealth = MaxHealth;
                     Attack = 20;
                     Armor = 5;
                     Gold = 1500;
@@ -59,13 +65,14 @@ namespace TextRPG
 
         public void TakeDamage(int damage)
         {
-            Health -= damage;
+            
+            NowHealth -= damage;
             if (IsDead) Console.WriteLine($"{Name}이(가) 죽었습니다.");
             else
             {
                 Console.Write($"{Name}이(가) {damage}의 데미지를 받았습니다. ");
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"{Name} 남은 체력: {Health}");
+                Console.WriteLine($"{Name} 남은 체력: {NowHealth}");
                 Console.ResetColor();
             }
         }
@@ -139,7 +146,7 @@ namespace TextRPG
             Console.ResetColor();
             Console.WriteLine($"Lv. 01 : 0%");
             Console.WriteLine($"{Name} ({CharacterJob})");
-            Console.WriteLine($"체력 : {Health}");
+            Console.WriteLine($"체력 : {NowHealth}");
 
             if (EquippedItems.Count > 0)
             {
@@ -166,6 +173,38 @@ namespace TextRPG
             Console.WriteLine($"Gold : {Gold} G");
         }
 
+
+        public int NeedEx()
+        {
+            return 100 * Level;
+        }
+
+        public void AddEx(int xp)
+        {
+            NowEx += xp;
+
+            if(NowEx >= NeedEx())
+            {
+                NowEx = 0;
+                Levelup();
+            }
+        }
+
+        public void Levelup()
+        {
+            Level++;
+
+            MaxHealth += randomstat.Next(5, 11);
+            Attack += randomstat.Next(1, 6);
+            Armor += randomstat.Next(1, 5);
+        }
+
+
+        public void Rset()
+        {
+            Gold -= 50;
+            NowHealth = MaxHealth;
+        }
 
     }
 }

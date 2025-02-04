@@ -30,9 +30,9 @@ namespace TextRPG
         public void SetStatsBasedOnLevel()
         {
             // 스테이지 레벨에 따른 능력치 증가
-            Attack += (int)((Level * 2));  // 예시: 레벨마다 공격력 2 증가
-            Health += (int)((Level * 5)); // 예시: 레벨마다 체력 10 증가
-            Armor += (int)((Level * 1));    // 예시: 레벨마다 방어력 1 증가
+            Attack += (Level * 2);  // 예시: 레벨마다 공격력 2 증가
+            Health += (Level * 5); // 예시: 레벨마다 체력 10 증가
+            Armor += (Level * 1);    // 예시: 레벨마다 방어력 1 증가
         }
 
 
