@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -92,7 +93,7 @@ namespace TextRPG
                 if (input == "0") return;
             }
         }
-
+        
 
         public void ShowStageNum(Character character)   // 스테이지 선택 메뉴
         {
@@ -128,6 +129,7 @@ namespace TextRPG
                     currentStageNumber = Stagenum;
                     Monster = CreateMonsterForStage(currentStageNumber);
                     EnterStage(character);
+                    if (character.IsDead) return;
                 }
                 else isLoop = true;
             }
@@ -143,6 +145,7 @@ namespace TextRPG
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine($"Stage{currentStageNumber}");
                 Console.ResetColor();
+                Console.WriteLine($"\n현재 체력: {character.NowHealth}");
                 Console.WriteLine();
                 Console.WriteLine("1. 싸운다");
                 Console.WriteLine("2. 스테이지 정보");
@@ -155,6 +158,13 @@ namespace TextRPG
                     Console.ResetColor();
                     isLoop = false;
                 }
+                if (Game.isRest)
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("체력을 회복했습니다");
+                    Console.ResetColor();
+                    Game.isRest = false;
+                }
                 Console.WriteLine("원하시는 행동을 입력해주세요.");
                 Console.Write(">> ");
                 string input = Console.ReadLine();
@@ -162,6 +172,7 @@ namespace TextRPG
                 else if (int.TryParse(input, out int Fightnum) && Fightnum == 1)
                 {
                     Fight(character);
+                    if (character.IsDead) return;  // 캐릭터 사밍 시 나가기
                 }
                 else if (int.TryParse(input, out int infonum) && infonum == 2)
                 {
@@ -187,10 +198,11 @@ namespace TextRPG
                 Console.WriteLine($"Stage{currentStageNumber}");
                 Console.ResetColor();
                 // 전투 루프
-                while (character.NowHealth > 0 && Monster.Health > 0)
+                if (!isLoop)
                 {
-                    if (!isLoop)
+                    while (character.NowHealth > 0 && Monster.Health > 0)
                     {
+
                         Console.WriteLine();
                         int CAttack = Math.Max(0, character.Attack - Monster.Armor);   // 캐릭터의 공격값
                         int MAttack = Math.Max(0, Monster.Attack - character.Armor); // 몬스터의 공격값
@@ -201,9 +213,9 @@ namespace TextRPG
                         Monster.TakeDamage(CrandAttack);
                         // 몬스터 공격
                         character.TakeDamage(MrandAttack);
+
                     }
                 }
-
                 // 전투 결과 출력
                 Monster.Health = monsterMaxHP;  // 몬스터 체력 초기화
                 
@@ -212,36 +224,29 @@ namespace TextRPG
                     int getGold = randomG.Next(currentStageNumber * 100, currentStageNumber * 200);
                     
                     getEx = currentStageNumber * 10 * retrynum;
-                    
+                    double getExp = ((character.NowEx + getEx) / (double)character.NeedEx()) * 100;
+
                     Console.WriteLine($"스테이지{currentStageNumber} 클리어!");
-                    if (character.islevelup)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Blue;
-                        Console.WriteLine("\n축하드립니다 레벨업하셨습니다!");
-                        Console.ResetColor();
-                        character.islevelup = false;
-                    }
+                    
                     Console.WriteLine("\n[탐험 결과]");
                     Console.WriteLine($"체력 {character.NowHealth}");
-                    Console.WriteLine($"Level {character.Level} {character.EXP} % -> {((character.NowEx + getEx) / (double)character.NeedEx()) * 100} %");
+                    if (getExp < 100) Console.WriteLine($"Level {character.Level} {character.EXP.ToString("F1")} % -> {getExp.ToString("F1")} %");
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                        Console.WriteLine("축하드립니다 레벨업하셨습니다!");
+                        Console.ResetColor();
+                        Console.WriteLine($"Level {character.Level} {character.EXP.ToString("F1")} % -> Level {character.Level + 1} 0 %");
+                    }
                     character.AddEx(getEx);
                     Console.WriteLine($"보유 골드: {character.Gold}G -> {character.Gold + getGold}G");
                     character.Gold += getGold;
                 }
-                else if( character.IsDead )
+                else if( character.IsDead )  // 캐릭터 사망 시 나가기
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("\n탐험 실패");
-                    Console.ResetColor();
-                    character.NowHealth = character.MaxHealth;
-                    Console.WriteLine("\n[탐험 결과]");
-                    Console.WriteLine($"체력 {character.NowHealth}");
-                    Console.WriteLine($"Level {character.Level} {character.EXP} % -> {((character.NowEx - character.Level * 20) / (double)character.NeedEx()) * 100} %");
-                    if (character.NowEx > character.Level * 20)
-                    {
-                        character.NowEx -= character.Level * 20;
-                    }
-                    else character.NowEx = 0;
+                    SaveGameClass saveGame = new SaveGameClass();
+                    saveGame.ResetSaveData();
+                    return;
                 }
 
                 Console.WriteLine("\n1. 다시하기");
@@ -269,7 +274,10 @@ namespace TextRPG
                     break;
                 }
                 else if (rtyinput == "0") return;
-                else isLoop = true;
+                else
+                {
+                    isLoop = true;
+                }
             }
         }
     }

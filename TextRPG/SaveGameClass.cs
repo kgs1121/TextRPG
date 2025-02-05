@@ -71,7 +71,7 @@ namespace TextRPG
             {
                 foreach (Item item in inventory.Items)
                 {
-                    writer.WriteLine($"{item.Name},{item.ArmorBonus},{item.AttackBonus},{item.Description}");
+                    writer.WriteLine($"{item.Name}, {item.AttackBonus}, {item.ArmorBonus}, {item.Description}, {item.Price}, {item.IsEquipped}");
                 }
             }
         }
@@ -92,16 +92,56 @@ namespace TextRPG
                     string[] parts = line.Split(',');
 
                     string name = parts[0];
-                    int type = int.Parse(parts[1]);
-                    int armorBonus = int.Parse(parts[2]);
-                    int attackBonus = int.Parse(parts[3]);
-                    string description = parts[4];
-                    int price = int.Parse(parts[5]);
-
-                    inventory.AddItem(new Item(name, armorBonus, attackBonus, description, price));
+                    int armorBonus = int.Parse(parts[1]);
+                    int attackBonus = int.Parse(parts[2]);
+                    string description = parts[3];
+                    int price = int.Parse(parts[4]);
+                    bool isequipped = bool.Parse(parts[5]);
+                    inventory.AddItem(new Item(name, armorBonus, attackBonus, description, price, isequipped));
                 }
             }
         }
+
+
+        public void SaveEquippedItems(Character character)
+        {
+            using (StreamWriter writer = new StreamWriter("equippedItems.txt"))
+            {
+                foreach (var item in character.EquippedItems)
+                {
+                    writer.WriteLine($"{item.Name},{item.AttackBonus},{item.ArmorBonus},{item.Description}, {item.IsEquipped}");
+                }
+            }
+        }
+
+
+        public void LoadEquippedItems(Character character)
+        {
+            if (File.Exists("equippedItems.txt"))
+            {
+                using (StreamReader reader = new StreamReader("equippedItems.txt"))
+                {
+                    string line;
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        string[] itemData = line.Split(',');
+
+                        // 아이템을 생성하고 장착
+                        string itemName = itemData[0];
+                        int attackBonus = int.Parse(itemData[1]);
+                        int armorBonus = int.Parse(itemData[2]);
+                        string description = itemData[3];
+                        bool isEquipped = bool.Parse(itemData[4]);
+
+                        // 해당 아이템을 생성
+                        IItem item = new Item(itemName, attackBonus, armorBonus, description, 0, isEquipped);  // 가격은 0으로 설정하거나 적절히 처리
+                        if (item != null) character.EquippedItems.Add(item);  // 장착된 아이템 리스트에 추가                        
+                    }
+                }
+            }
+        }
+
+
 
 
         public void ResetSaveData()
@@ -114,7 +154,10 @@ namespace TextRPG
             {
                 File.Delete("inventory.txt");
             }
-            Console.WriteLine("저장된 데이터가 초기화되었습니다.");
+            if (File.Exists("equippedItems.txt"))
+            {
+                File.Delete("equippedItems.txt");
+            }
         }
 
 

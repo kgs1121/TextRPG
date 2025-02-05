@@ -19,7 +19,7 @@ namespace TextRPG
                 // 화면 초기 출력 (단 한 번만 호출)
                 Console.Clear();
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("직업을 선택해주세요.");
+                Console.WriteLine("캐릭터 생성");
                 Console.ResetColor();
 
                 // 직업 목록을 출력하는 루프
@@ -38,7 +38,7 @@ namespace TextRPG
                     isLoop = false;
                 }
 
-                Console.WriteLine("원하는 직업 번호를 입력해주세요.");
+                Console.WriteLine("\n원하시는 행동을 입력해주세요.");
                 Console.Write(">> ");
 
                 jobChoice = Console.ReadLine();

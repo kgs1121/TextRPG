@@ -13,22 +13,17 @@ namespace TextRPG
         public int ArmorBonus { get; set; }
         public string Description { get; }
         public int Price { get; set; }  // 가격
+        public bool IsEquipped { get; set; }
 
-        public Item(string name, int attackBonus, int armorBonus, string description, int price)
+        public Item(string name, int attackBonus, int armorBonus, string description, int price, bool isequipped)
         {
             Name = name;
             AttackBonus = attackBonus;
             ArmorBonus = armorBonus;
             Description = description;
             Price = price;
+            IsEquipped = isequipped;
             int orginPrice = price;
-        }
-
-        public void Use(Character character)
-        {
-            // 예시로 아이템을 사용했을 때 캐릭터의 능력치를 증가시키는 방식으로 처리
-            character.Attack += AttackBonus;
-            character.Armor += ArmorBonus;
         }
     }
 }

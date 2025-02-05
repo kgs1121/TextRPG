@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace TextRPG
 {
     // 캐릭터 클래스
     public class Character : ICharacter
     {
-        public string Name { get; }
+        public string Name { get; set; }
         public Job CharacterJob { get; }
         public int MaxHealth { get; set; }
         public int NowHealth { get; set; }
@@ -43,7 +44,7 @@ namespace TextRPG
                     NowHealth = MaxHealth;
                     Attack = 15;
                     Armor = 10;
-                    Gold = 0;
+                    Gold = 10000;
                     EquippedItem = null;
                     break;
                 case Job.마법사:
@@ -65,12 +66,25 @@ namespace TextRPG
             }
         }
 
+        public void nameChange(string name)
+        {
+            Name = name;
+        }
+
+
+
 
         public void TakeDamage(int damage)  // 캐릭터 받는 데미지 출력
         {
             
             NowHealth -= damage;
-            if (IsDead) Console.WriteLine($"{Name}이(가) 죽었습니다.");
+            if (IsDead)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"{Name}이(가) 죽었습니다.");
+                Console.ResetColor();
+            }
+
             else
             {
                 Console.Write($"{Name}이(가) {damage}의 데미지를 받았습니다. ");
@@ -91,6 +105,8 @@ namespace TextRPG
                 Armor -= EquippedItem.ArmorBonus;
             }
 
+            EquippedItems.Add(item);
+            item.IsEquipped = true;
             // 새로운 아이템 장착
             EquippedItem = item;
 
@@ -109,6 +125,7 @@ namespace TextRPG
                 Console.Clear();
                 Statusconsol();
                 Console.WriteLine();
+                Console.WriteLine("1. 이름바꾸기");
                 Console.WriteLine("0. 나가기");
                 Console.WriteLine();
                 if (isLoop)
@@ -124,6 +141,12 @@ namespace TextRPG
                 if (choice == "0")
                 {
                     break; // 0을 입력하면 메뉴로 돌아가도록 종료
+                }
+                else if (choice == "1")
+                {
+                    Console.Write("\n변경할 이름을 입력하세요: ");
+                    string inputname = Console.ReadLine();
+                    nameChange(inputname);
                 }
                 else
                 {
@@ -148,7 +171,7 @@ namespace TextRPG
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("상태 보기");
             Console.ResetColor();
-            if(Level < 10) Console.WriteLine($"Lv. 0{Level} : {EXP} %");
+            if(Level < 10) Console.WriteLine($"Lv. 0{Level} : {EXP.ToString("F1")} %");
             else Console.WriteLine($"Lv. {Level} : {EXP} %");
             Console.WriteLine($"{Name} ({CharacterJob})");
             Console.WriteLine($"체력 : {NowHealth}");
@@ -166,8 +189,21 @@ namespace TextRPG
             // 공격력, 방어력 계산 후 아이템 효과가 있으면 (+x) 표시
             if (EquippedItems.Count > 0)
             {
-                Console.WriteLine($"공격력 : {totalAttack} (+{attackBonus})");
-                Console.WriteLine($"방어력 : {totalArmor} (+{armorBonus})");
+                if (attackBonus > 0 && armorBonus > 0)
+                {
+                    Console.WriteLine($"공격력 : {totalAttack} (+{attackBonus})");
+                    Console.WriteLine($"방어력 : {totalArmor} (+{armorBonus})");
+                }
+                else if (armorBonus > 0)
+                {
+                    Console.WriteLine($"공격력 : {totalAttack}");
+                    Console.WriteLine($"방어력 : {totalArmor} (+{armorBonus})");
+                }
+                else if (attackBonus > 0)
+                {
+                    Console.WriteLine($"공격력 : {totalAttack} (+{attackBonus})");
+                    Console.WriteLine($"방어력 : {totalArmor}");
+                }
             }
             else
             {
@@ -217,7 +253,6 @@ namespace TextRPG
                 Gold -= 50;
                 NowHealth = MaxHealth;
             }
-            else Console.WriteLine("골드가 부족합니다");
         }
     }
 }

@@ -32,7 +32,7 @@ namespace TextRPG
         int AttackBonus { get; set; }
         int ArmorBonus {  get; set; }
         string Description {  get; }
-        void Use(Character character); // 캐릭터에게 아이템을 사용하는 메서드
+        bool IsEquipped { get; set; }
     }
 
 
@@ -70,18 +70,53 @@ namespace TextRPG
         public static bool isRest = false;
         static void Main(string[] args)
         {
-            StartGame();
+            string input = null;
+
+            while (true)
+            {
+                if (input == null || input == "1")
+                {
+                    //Console.Clear();
+                    StartGame();
+                }
+
+                Console.WriteLine("\n게임을 종료하시겠습니까?");
+                Console.WriteLine("\n1. 계속한다.");
+                Console.WriteLine("0. 종료");
+                Console.WriteLine("\n원하시는 행동을 입력해주세요.");
+                Console.Write(">> ");
+                input = Console.ReadLine();
+                if (input == "0") return;
+                else if (input == "1") continue;
+                else
+                {
+                    while (true)
+                    {
+                        Console.WriteLine("다시 입력해주세요");
+                        Console.Write(">> ");
+                        input = Console.ReadLine();
+                        if (input == "0") return;
+                        else if(input == "1") break;
+                    }
+                    
+                }
+            }
         }
         static void StartGame()
         {
+            
             SaveGameClass saveGame = new SaveGameClass(); // 저장 기능 클래스 생성
-                                                            // 저장된 캐릭터 로드
-            Character player = saveGame.LoadCharacter();
+            Character player = saveGame.LoadCharacter();  // 저장된 캐릭터 로드
+           
+
             if (player == null)
             {
                 JobSelection jobSelection = new JobSelection();
                 player = jobSelection.SelectCharacter(); // 새 캐릭터 생성
             }
+
+            saveGame.LoadEquippedItems(player);       // 프로그램 시작 시 장착된 아이템 불러오기
+
 
             // 저장된 인벤토리 로드
             Inventory inventory = new Inventory();
@@ -163,6 +198,7 @@ namespace TextRPG
                         break;
                     case "4":
                         dungeon.ShowDungeon(player);
+                        if(player.IsDead) return;
                         break;
                     case "5":
                         player.Rset();
@@ -172,6 +208,7 @@ namespace TextRPG
                         isSave = true;
                         saveGame.SaveCharacter(player);
                         saveGame.SaveInventory(inventory);
+                        saveGame.SaveEquippedItems(player);
                         break;
                     case "초기화하기":
                         Console.WriteLine("\n아무거나 입력 시 초기화");
@@ -183,11 +220,13 @@ namespace TextRPG
                         else
                         {
                             saveGame.ResetSaveData();
+                            Console.WriteLine("저장된 데이터가 초기화되었습니다.");
                             return;
                         }
                     case "종료":
-                        Console.WriteLine("게임을 종료합니다.");
                         return;  // 프로그램 종료
+                    case "whdfy":
+                        return;  // 영어 종료
                     default:
                         isLoop = true;
                         break;

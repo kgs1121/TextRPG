@@ -89,7 +89,7 @@ namespace TextRPG
 
         }
 
-        private void DisplayInventoryHeader()  //인벤토리 화면1
+        private void DisplayInventoryHeader()  //인벤토리 메인 화면 머리
         {
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("인벤토리");
@@ -97,7 +97,7 @@ namespace TextRPG
             Console.WriteLine("보유 중인 아이템을 관리할 수 있습니다.");
         }
 
-        public void DisplayItemList(Character character)  //인벤토리 화면2
+        public void DisplayItemList(Character character)  //인벤토리 메인
         {
             
             Console.WriteLine();
@@ -115,7 +115,7 @@ namespace TextRPG
                     string equippedMark = "";
 
                     // 장착된 아이템이 있으면 "[E]" 표시
-                    if (character.EquippedItems.Contains(item))
+                    if (item.IsEquipped == true)
                     {
                         equippedMark = "[E]";
                     }
@@ -126,7 +126,7 @@ namespace TextRPG
                     if (item.ArmorBonus > 0) bonus += $" 방어력 +{item.ArmorBonus}";
 
                     // 아이템 정보 출력
-                    if (!Shop.isSaleItem)
+                    if (!Shop.isSaleItem) // 아이템 판매 메뉴가 아니면
                     {
                         Console.WriteLine($"- {equippedMark}{item.Name} |{bonus} | {item.Description}");
                     }
@@ -146,7 +146,7 @@ namespace TextRPG
             {
                 Console.Clear();
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("인벤토리 - 장착 관리");
+                Console.WriteLine("인벤토리 - 아이템 장착");
                 Console.ResetColor();  // 색상 초기화
                 Console.WriteLine("보유 중인 아이템을 관리할 수 있습니다.");
                 Console.WriteLine();
@@ -164,7 +164,7 @@ namespace TextRPG
                         string equippedMark = "";
 
                         // 장착된 아이템이 있으면 "[E]" 표시
-                        if (character.EquippedItems.Contains(item))
+                        if (item.IsEquipped == true)
                         {
                             equippedMark = "[E]";
                         }
@@ -199,10 +199,10 @@ namespace TextRPG
                 {
                     var selectedItem = Items[itemIndex - 1];
                     // 이미 장착되어 있지 않으면 장착
-                    if (!character.EquippedItems.Contains(selectedItem))
+                    if (selectedItem.IsEquipped == false)
                     {
+                        selectedItem.IsEquipped = true;
                         character.EquippedItems.Add(selectedItem);
-                        Console.WriteLine($"{selectedItem.Name}을(를) 장착했습니다.");
                     }
                     else
                     {
@@ -242,7 +242,8 @@ namespace TextRPG
                         if (item.AttackBonus > 0) bonus += $" 공격력 +{item.AttackBonus}";
                         if (item.ArmorBonus > 0) bonus += $" 방어력 +{item.ArmorBonus}";
 
-                        // Description을 참조하기 위해 IItem로 캐스팅
+                        string equippedDisplay = item.IsEquipped ? "[E]" : "";
+
                         Console.WriteLine($"{i + 1}. [E] {item.Name} |{bonus} | {item.Description}");
                     }
                 }
@@ -268,8 +269,10 @@ namespace TextRPG
                 else if (int.TryParse(equipChoice, out int itemIndex) && itemIndex > 0 && itemIndex <= character.EquippedItems.Count)
                 {
                     var selectedItem = character.EquippedItems[itemIndex - 1];
+                    var sss = Items[itemIndex - 1];
+                    selectedItem.IsEquipped = false;
+                    sss.IsEquipped = false;
                     character.EquippedItems.Remove(selectedItem);  // 장착 해제
-                    Console.WriteLine($"{selectedItem.Name}을(를) 장착 해제했습니다.");
                 }
                 else
                 {

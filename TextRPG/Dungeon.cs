@@ -44,6 +44,7 @@ namespace TextRPG
                     // ShowStageNum 호출 (character를 매개변수로 넘김)
                     Stage currentStage = new Stage(stageNum);  // Stage 객체를 생성
                     currentStage.ShowStageNum(character);
+                    if (character.IsDead) return;
                     continue;
                 }
                 else if (input == "0")
