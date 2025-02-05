@@ -251,13 +251,12 @@ namespace TextRPG
                 if (input == "0") return;
                 else if (int.TryParse(input, out int Selnum) && (Selnum > 0 && Selnum <= inventory.Items.Count)) // 인벤토리 아이템 번호 확인
                 {
-                    var selectedItem = ItemsSale[Selnum];
+                    var selectedItem = ItemsSale[Selnum - 1];
                     int getGold = itemdiscount[Selnum - 1];
                     character.Gold += getGold;
-                    
                     itemdiscount.RemoveAt(Selnum - 1);
                     inventory.RemoveItem(Selnum - 1);
-                    selectedItem.Price = itemPrices[Selnum];
+                    selectedItem.Price = itemPrices[Selnum - 1];
                 }
                 else isLoop = true;   // 오류 번호 입력 시 메시지 출력
             }
