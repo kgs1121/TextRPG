@@ -10,8 +10,8 @@ namespace TextRPG
     public class Shop
     {
         public List<Item> ItemsSale { get; private set; }
-        public List<int> itemPrices = new List<int>();
-        public static List<int> itemdiscount = new List<int>();  //
+        public List<int> itemPrices = new List<int>();  // 원래 가격
+        public static List<int> itemdiscount = new List<int>();  // 판매 시 가격 리스트
         public static bool isSaleItem = false;
         public Shop()
         {
@@ -238,7 +238,7 @@ namespace TextRPG
                 inventory.DisplayItemList(character);
                 Console.WriteLine("\n0. 나가기");
                 Console.WriteLine();
-                if (isLoop)
+                if (isLoop) // 오류 번호 입력 시 메시지 출력
                 {
                     Console.ForegroundColor= ConsoleColor.Red;
                     Console.WriteLine("잘못된 입력입니다. 다시 입력해주세요");
@@ -249,18 +249,17 @@ namespace TextRPG
                 Console.Write(">> ");
                 string input = Console.ReadLine();
                 if (input == "0") return;
-                else if (int.TryParse(input, out int Selnum) && (Selnum > 0 && Selnum <= inventory.Items.Count))
+                else if (int.TryParse(input, out int Selnum) && (Selnum > 0 && Selnum <= inventory.Items.Count)) // 인벤토리 아이템 번호 확인
                 {
                     var selectedItem = ItemsSale[Selnum];
-                    int getGold = (int)(itemPrices[Selnum] * (4.0 / 5));
+                    int getGold = itemdiscount[Selnum - 1];
                     character.Gold += getGold;
-                    character.Attack -= selectedItem.AttackBonus;
-                    character.Armor -= selectedItem.ArmorBonus;
+                    
                     itemdiscount.RemoveAt(Selnum - 1);
                     inventory.RemoveItem(Selnum - 1);
                     selectedItem.Price = itemPrices[Selnum];
                 }
-                else isLoop = true;
+                else isLoop = true;   // 오류 번호 입력 시 메시지 출력
             }
         }
     }
