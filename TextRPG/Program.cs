@@ -106,10 +106,8 @@ namespace TextRPG
         }
         static void StartGame()
         {
-            
             SaveGameClass saveGame = new SaveGameClass(); // 저장 기능 클래스 생성
             Character player = saveGame.LoadCharacter();  // 저장된 캐릭터 로드
-           
 
             if (player == null)
             {
@@ -118,7 +116,6 @@ namespace TextRPG
             }
 
             saveGame.LoadEquippedItems(player);       // 프로그램 시작 시 장착된 아이템 불러오기
-
 
             // 저장된 인벤토리 로드
             Inventory inventory = new Inventory();
@@ -129,6 +126,9 @@ namespace TextRPG
             bool fch = false;
             bool isLoop = false;
             bool isSave = false;
+
+            saveGame.LoadItemDiscounts();
+            saveGame.LoadItemStatus(shop);
 
             while (true)
             {
@@ -211,6 +211,8 @@ namespace TextRPG
                         saveGame.SaveCharacter(player);
                         saveGame.SaveInventory(inventory);
                         saveGame.SaveEquippedItems(player);
+                        saveGame.SaveItemStatus(shop);
+                        saveGame.SaveItemDiscounts();
                         break;
                     case "초기화하기":
                         Console.WriteLine("\n아무거나 입력 시 초기화");

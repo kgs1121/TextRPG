@@ -33,8 +33,8 @@ namespace TextRPG
             // 아이템 목록 출력
             DisplayItemList(character);
 
-            Console.WriteLine("\n1. 장착 관리");
-            Console.WriteLine("2. 장착 헤제");
+            Console.WriteLine("\n1. 아이템 장착");
+            Console.WriteLine("2. 아이템 장착 헤제");
             Console.WriteLine("0. 나가기");
             Console.WriteLine();
 
@@ -51,8 +51,8 @@ namespace TextRPG
                     DisplayInventoryHeader();
                     DisplayItemList(character);
 
-                    Console.WriteLine("\n1. 장착 관리");
-                    Console.WriteLine("2. 장착 헤제");
+                    Console.WriteLine("\n1. 아이템 장착");
+                    Console.WriteLine("2. 아이템 장착 헤제");
                     Console.WriteLine("0. 나가기\n");
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("잘못된 입력입니다. 다시 입력해주세요.");
@@ -68,12 +68,12 @@ namespace TextRPG
                         Console.Clear();
                         DisplayInventoryHeader();
                         DisplayItemList(character);
-                        Console.WriteLine("\n1. 장착 관리");
-                        Console.WriteLine("2. 장착 헤제");
+                        Console.WriteLine("\n1. 아이템 장착");
+                        Console.WriteLine("2. 아이템 장착 헤제");
                         Console.WriteLine("0. 나가기\n");
 
                     }
-                    else if (actionChoice == "2") // 나가기
+                    else if (actionChoice == "2") // 아이템 장착 해제
                     {
                         UnEquipMenu(character);
                         Console.Clear();
@@ -118,6 +118,7 @@ namespace TextRPG
                     if (item.IsEquipped == true)
                     {
                         equippedMark = "[E]";
+                        Console.ForegroundColor = ConsoleColor.Green;
                     }
 
                     string bonus = string.Empty;
@@ -130,8 +131,12 @@ namespace TextRPG
                     {
                         Console.WriteLine($"- {equippedMark}{item.Name} |{bonus} | {item.Description}");
                     }
-                    else Console.WriteLine($"- {equippedMark}{item.Name} |{bonus} | {item.Description} | 판매 골드: {Shop.itemdiscount[j]}");
+                    else if (Shop.isSaleItem)
+                    {
+                        if (j <  Shop.itemdiscount.Count) Console.WriteLine($"{i + 1} {equippedMark}{item.Name} |{bonus} | {item.Description} | 판매 골드: {Shop.itemdiscount[j]}");
+                    }
                     j++;
+                    Console.ResetColor();
                 }
             }
         }
@@ -142,6 +147,7 @@ namespace TextRPG
         {
             string errorText = "잘못된 입력입니다. 다시 입력해주세요.";
             bool isLoop = false;
+            bool isEQ = false;
             while (true)
             {
                 Console.Clear();
@@ -167,6 +173,7 @@ namespace TextRPG
                         if (item.IsEquipped == true)
                         {
                             equippedMark = "[E]";
+                            Console.ForegroundColor = ConsoleColor.Green;
                         }
 
                         string bonus = string.Empty;
@@ -176,14 +183,23 @@ namespace TextRPG
 
                         // 아이템 정보 출력
                         Console.WriteLine($"{i + 1}. {equippedMark}{item.Name} |{bonus} | {item.Description}");
+                        Console.ResetColor();
                     }
                 }
 
                 Console.WriteLine("\n0. 나가기");
+                Console.WriteLine();
+                if (isEQ)
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("이 아이템은 이미 장착되어 있습니다.");
+                    Console.ResetColor();
+                    isEQ = false;
+                }
                 if (isLoop)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("\n잘못된 입력입니다. 다시 입력해주세요.");
+                    Console.WriteLine("잘못된 입력입니다. 다시 입력해주세요.");
                     Console.ResetColor();
                     isLoop = false;
                 }
@@ -206,7 +222,7 @@ namespace TextRPG
                     }
                     else
                     {
-                        Console.WriteLine("이 아이템은 이미 장착되어 있습니다.");
+                        isEQ = true;                       
                     }
                 }
                 else isLoop = true;

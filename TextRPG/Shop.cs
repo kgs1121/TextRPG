@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -235,7 +236,7 @@ namespace TextRPG
                 Console.WriteLine($"{character.Gold} G");
                 Console.WriteLine();
                 inventory.DisplayItemList(character);
-                Console.WriteLine("0. 나가기");
+                Console.WriteLine("\n0. 나가기");
                 Console.WriteLine();
                 if (isLoop)
                 {
@@ -253,6 +254,8 @@ namespace TextRPG
                     var selectedItem = ItemsSale[Selnum];
                     int getGold = (int)(itemPrices[Selnum] * (4.0 / 5));
                     character.Gold += getGold;
+                    character.Attack -= selectedItem.AttackBonus;
+                    character.Armor -= selectedItem.ArmorBonus;
                     itemdiscount.RemoveAt(Selnum - 1);
                     inventory.RemoveItem(Selnum - 1);
                     selectedItem.Price = itemPrices[Selnum];

@@ -142,6 +142,86 @@ namespace TextRPG
         }
 
 
+        public void SaveItemStatus(Shop shop)
+        {
+            using (StreamWriter writer = new StreamWriter("items_data.txt"))
+            {
+                foreach (var item in shop.ItemsSale)
+                {
+                    // 아이템이 구매되었으면 Price는 0으로 저장
+                    string status = item.Price == 0 ? "purchased" : "available";
+                    writer.WriteLine($"{item.Name},{status}");
+                }
+            }
+        }
+
+
+        public void LoadItemStatus(Shop shop)
+        {
+            if (File.Exists("items_data.txt"))
+            {
+                using (StreamReader reader = new StreamReader("items_data.txt"))
+                {
+                    string line;
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        string[] parts = line.Split(',');
+
+                        if (parts.Length == 2)
+                        {
+                            string itemName = parts[0];
+                            string status = parts[1];
+
+                            var item = shop.ItemsSale.FirstOrDefault(i => i.Name == itemName);
+                            if (item != null && status == "purchased")
+                            {
+                                item.Price = 0; // 구매된 아이템은 Price 0으로 설정
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+        public void SaveItemDiscounts()
+        {
+            using (StreamWriter writer = new StreamWriter("itemdiscounts.txt"))
+            {
+                foreach (var discount in Shop.itemdiscount)
+                {
+                    writer.WriteLine(discount); // 할인 정보 하나씩 파일에 저장
+                }
+            }
+        }
+
+
+        public void LoadItemDiscounts()
+        {
+            if (File.Exists("itemdiscounts.txt"))
+            {
+                using (StreamReader reader = new StreamReader("itemdiscounts.txt"))
+                {
+                    string line;
+                    Shop.itemdiscount.Clear(); // 기존 할인 리스트 초기화
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        if (int.TryParse(line, out int discount))
+                        {
+                            Shop.itemdiscount.Add(discount); // 할인 데이터를 리스트에 추가
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Console.WriteLine("아이템 할인 정보 파일이 존재하지 않습니다.");
+            }
+        }
+
+
+
+
 
 
         public void ResetSaveData()
@@ -157,6 +237,14 @@ namespace TextRPG
             if (File.Exists("equippedItems.txt"))
             {
                 File.Delete("equippedItems.txt");
+            }
+            if (File.Exists("items_data.txt"))
+            {
+                File.Delete("items_data.txt");
+            }
+            if (File.Exists("itemdiscounts.txt"))  
+            {
+                File.Delete("itemdiscounts.txt");
             }
         }
 
