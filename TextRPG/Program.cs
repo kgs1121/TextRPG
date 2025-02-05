@@ -85,7 +85,9 @@ namespace TextRPG
                 Console.WriteLine("0. 종료");
                 Console.WriteLine("\n원하시는 행동을 입력해주세요.");
                 Console.Write(">> ");
+
                 input = Console.ReadLine();
+
                 if (input == "0") return;
                 else if (input == "1") continue;
                 else
@@ -202,7 +204,7 @@ namespace TextRPG
                         break;
                     case "5":
                         player.Rset();
-                        fch = true;
+                        if(player.Gold < 50) fch = true;
                         break;
                     case "6":
                         isSave = true;

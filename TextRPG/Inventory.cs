@@ -79,8 +79,8 @@ namespace TextRPG
                         Console.Clear();
                         DisplayInventoryHeader();
                         DisplayItemList(character);
-                        Console.WriteLine("\n1. 장착 관리");
-                        Console.WriteLine("2. 장착 헤제");
+                        Console.WriteLine("\n1. 아이템 장착");
+                        Console.WriteLine("2. 아이템 장착 헤제");
                         Console.WriteLine("0. 나가기\n");
                     }
                     else if (actionChoice == "0") return;  // 루프 종료 (인벤토리 종료)
@@ -137,7 +137,7 @@ namespace TextRPG
         }
 
 
-        // 장착 관리 화면 출력
+        // 아이템 장착 메뉴
         public void ShowEquipMenu(Character character)
         {
             string errorText = "잘못된 입력입니다. 다시 입력해주세요.";
@@ -213,7 +213,7 @@ namespace TextRPG
             }
         }
 
-        // 장착 해제 메뉴 추가
+        // 장착 해제 메뉴
         public void UnEquipMenu(Character character)
         {
             
