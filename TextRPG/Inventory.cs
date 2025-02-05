@@ -131,7 +131,7 @@ namespace TextRPG
                     {
                         Console.WriteLine($"- {equippedMark}{item.Name} |{bonus} | {item.Description}");
                     }
-                    else if (Shop.isSaleItem)
+                    else 
                     {
                         if (j <  Shop.itemdiscount.Count) Console.WriteLine($"{i + 1} {equippedMark}{item.Name} |{bonus} | {item.Description} | 판매 골드: {Shop.itemdiscount[j]}");
                     }
